@@ -1,0 +1,179 @@
+from Tkinter import *
+
+
+class register:
+    def __init__(self, parent):
+        top = self.top = Toplevel(parent)
+        self.var_user = StringVar()
+        self.var_pass = StringVar()
+        self.var_retype = StringVar()
+
+        Label(top, text="What is your username: ").grid(row=0, sticky=W)
+        Label(top, text="What is your password: ").grid(row=1, sticky=W)
+        Label(top, text="Retype Password: ").grid(row=2, sticky=W)
+        self.ent_user = Entry(top, textvariable=self.var_user)
+        self.ent_user.grid(row=0, column=1)
+        self.ent_pass = Entry(top, textvariable=self.var_pass)
+        self.ent_pass.grid(row=1, column=1)
+        self.ent_retype = Entry(top, textvariable=self.var_retype)
+        self.ent_retype.grid(row=2, column=1)
+        Button(top, text='Submit', command=self.registercheck).grid(row=3)
+
+
+
+
+    def registercheck(self):
+        u, p, r = self.var_user.get(), self.var_pass.get(), self.var_retype.get()
+        loginss = u
+        pcc = p
+        read_user = open('username.txt', "r")
+        read_pass = open('password.txt', "r")
+        text1 = read_user.read()
+
+        if loginss in text1:
+            print "Username already in use."
+            self.ent_user.delete(0, END)
+            self.ent_pass.delete(0, END)
+            self.ent_retype.delete(0, END)
+
+            read_user.close()
+            read_pass.close()
+        elif p == r:
+            with open("username.txt", "a") as userfile:
+                userfile.write("{}\n".format(loginss))
+
+            with open("password.txt", "a") as passfile:
+
+                translated = ''
+                key = 13
+                message = pcc
+
+                for symbol in message:
+
+                    if symbol.isalpha():
+
+                        num = ord(symbol)
+                        num += key
+
+                        if symbol.isupper():
+                            if num > ord('Z'):
+                                num -= 26
+                            elif num < ord('A'):
+                                num += 26
+                        elif symbol.islower():
+                            if num > ord('z'):
+                                num -= 26
+                            elif num < ord('a'):
+                                num += 26
+                        translated += chr(num)
+                    else:
+                        translated += symbol
+                passwords = translated
+                passfile.write("{}\n".format(passwords))
+
+                self.ent_user.delete(0, END)
+                self.ent_pass.delete(0, END)
+                self.ent_retype.delete(0, END)
+            print "registered :)"
+            read_user.close()
+            read_pass.close()
+        else:
+            print "Passwords do not match"
+            self.ent_user.delete(0, END)
+            self.ent_pass.delete(0, END)
+            self.ent_retype.delete(0, END)
+
+
+class login:
+
+    def __init__(self, parent):
+        top = self.top = Toplevel(parent)
+        self.var_use = StringVar()
+        self.var_pas = StringVar()
+
+        Label(top, text="Username: ").grid(row=0, sticky=W)
+        Label(top, text="Password: ").grid(row=1, sticky=W)
+        self.log_user12 = Entry(top, textvariable=self.var_use)
+        self.log_user12.grid(row=0, column=1)
+        self.log_pass12 = Entry(top, textvariable=self.var_pas)
+        self.log_pass12.grid(row=1, column=1)
+        self.logbut = Button(top, text='Log In', command=self.logincheck)
+        self.logbut.grid(row=2, sticky=W)
+
+    def logincheck(self):
+        user, password = self.var_use.get(), self.var_pas.get()
+        loguser = user
+
+        translated = ''
+        key = 13
+        message1 = password
+
+        for symbol in message1:
+
+            if symbol.isalpha():
+
+                num = ord(symbol)
+                num += key
+
+                if symbol.isupper():
+
+                    if num > ord('Z'):
+
+                        num -= 26
+                    elif num < ord('A'):
+                        num += 26
+                elif symbol.islower():
+                    if num > ord('z'):
+                        num -= 26
+                    elif num < ord('a'):
+                        num += 26
+                translated += chr(num)
+            else:
+                translated += symbol
+        logpassword = translated
+        read_luser = open('username.txt', "r")
+        read_lpass = open('password.txt', "r")
+        luser = read_luser.read()
+        lpass = read_lpass.read()
+        if (loguser in luser) and (logpassword in lpass):
+
+            print 'logged in!'
+            print 'log in state '
+            self.log_user12.delete(0, END)
+            self.log_pass12.delete(0, END)
+            self.logbut.destroy()
+            launch_home()
+        else:
+            print "Passwords do not match"
+            self.log_user12.delete(0, END)
+            self.log_pass12.delete(0, END)
+
+
+class home:
+
+    def __init__(self, parent):
+        top = self.top = Toplevel(parent)
+        Label(top, text="Welcome").pack()
+
+
+def launch_login():
+    inputdialog2 = login(root)
+    root.wait_window(inputdialog2.top)
+
+
+def launch_register():
+    inputdialog3 = register(root)
+    root.wait_window(inputdialog3.top)
+
+
+def launch_home():
+    inputdialog4 = home(root)
+    root.wait_window(inputdialog4.top)
+
+root = Tk()
+
+letters = Label(root, text='choose an option')
+letters.grid(row=1)
+Button(root, text='Log In', command=launch_login).pack()
+Button(root, text='Register', command=launch_register).pack()
+root.mainloop()
